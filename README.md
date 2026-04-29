@@ -2,7 +2,8 @@
 
 **BME 445B Final Report – Spring 2026**
 
-*Alfred E. Mann Department of Biomedical Engineering*  
+*Aava Abedinpour, Jaron Kawamura, Lindsay Best*  
+*Group 7 | Alfred E. Mann Department of Biomedical Engineering*  
 *USC Viterbi School of Engineering*
 
 ---
@@ -25,19 +26,15 @@
    - 4.3 [Data Flow](#43-data-flow)
    - 4.4 [Design Rationale](#44-design-rationale)
 5. [Live Prototype Demonstration](#live-prototype-demonstration)
-6. [Demonstration Video](#demonstration-video)
-7. [Fabrication, Assembly & System Integration Analysis](#fabrication-assembly--system-integration-analysis)
-   - 7.1 [Software Environment](#71-software-environment)
-   - 7.2 [Quality Score Model](#72-quality-score-model)
-   - 7.3 [Segmentation Model](#73-segmentation-model)
-   - 7.4 [Guidance Recommendation Algorithm](#74-guidance-recommendation-algorithm)
-   - 7.5 [Strengths & Weaknesses](#75-strengths--weaknesses)
-   - 7.6 [Future Improvements](#76-future-improvements)
-8. [Testing & Validation](#testing--validation)
-9. [Technical Difficulty Assessment](#technical-difficulty-assessment)
-10. [Lessons Learned, Institutional Knowledge & Regulatory Insight](#lessons-learned-institutional-knowledge--regulatory-insight)
-11. [Appendix: Lab Notebook & Documentation](#appendix-lab-notebook--documentation)
-12. [References](#references)
+6. [Fabrication, Assembly & System Integration Analysis](#fabrication-assembly--system-integration-analysis)
+   - 6.1 [Software Environment](#61-software-environment)
+   - 6.2 [Quality Score Model](#62-quality-score-model)
+   - 6.3 [Segmentation Model](#63-segmentation-model)
+   - 6.4 [Guidance Recommendation Algorithm](#64-guidance-recommendation-algorithm)
+   - 6.5 [Strengths & Weaknesses](#65-strengths--weaknesses)
+   - 6.6 [Future Improvements](#66-future-improvements)
+7. [Testing & Validation](#testing--validation)
+8. [References](#references)
 
 ---
 
@@ -200,27 +197,15 @@ The GUI's simplicity was a focal point: the entire workflow was completed withou
 
 ---
 
-## Demonstration Video
-
-The demonstration video was submitted to the Video Demonstration folder on Brightspace. The video covers:
-
-- Purpose of the system and target user demographic (sonography students training in A4C view acquisition).
-- Demonstration of the system being operated per the use case scenario, including upload, quality scoring, segmentation, and guidance output.
-- Technical explanation of two key realizations:
-  1. The ResNet-8 quality score model training methodology and validation approach
-  2. The LV center-of-mass guidance algorithm and its validation against quality score ground truth.
-
----
-
 ## Fabrication, Assembly & System Integration Analysis
 
-### 7.1 Software Environment
+### 6.1 Software Environment
 
 Google Colab Pro was used for expanded Google Drive storage, increased RAM and GPU tokens, and upgraded Gemini access. All scans, segmentation outputs, and project data were stored in Google Drive. Working within the Google ecosystem was convenient given that Colab, Drive, and Gemini are natively integrated.
 
 VS Code and ChatGPT were used to build the GUI, with test scans pulled from Google Drive for analysis. The GUI is hosted locally on a laptop. Gemini's Chrome extension was convenient for native code feedback within Google Colab, though Claude generated more consistently correct code for our pipeline. In January, USC deployed ChatGPT Edu (Plus) for all students; ChatGPT was used for minimal code generation outside of GUI construction. A step-by-step guide for running the system is provided in the GitHub repository.
 
-### 7.2 Quality Score Model
+### 6.2 Quality Score Model
 
 10,000 A4C images from distinct studies, each labeled with a quality score by iCardio clinicians, were used to train the quality score model. A ResNet-8 architecture was used for this regression task. Training was conducted in Google Colab Pro with GPU acceleration.
 
@@ -232,11 +217,11 @@ VS Code and ChatGPT were used to build the GUI, with test scans pulled from Goog
 
 These results indicate the model reliably distinguishes between good-quality and poor-quality images, fulfilling the primary functional requirement for the quality scoring component.
 
-### 7.3 Segmentation Model
+### 6.3 Segmentation Model
 
 Pretrained segmentation model weights from Gong (2023) were adapted to our workflow and data structure in Google Drive using Claude for code generation. This pipeline segments the left ventricle from uploaded echocardiogram frames, producing binary segmentation masks used as input to the guidance algorithm. Modifications to the original source code were necessary to align the model's expected input format with our image pipeline.
 
-### 7.4 Guidance Recommendation Algorithm
+### 6.4 Guidance Recommendation Algorithm
 
 The guidance algorithm proceeds as follows:
 
@@ -252,7 +237,7 @@ Results were validated across 1,000 randomly selected test cases. Absolute guida
 ![Guidance validation plot](images/image7.png)  
 *Figure 4. Guidance angle magnitude vs. quality score across 1,000 validation cases. Higher-quality images receive smaller angular corrections, validating the guidance algorithm's directional consistency.*
 
-### 7.5 Strengths & Weaknesses
+### 6.5 Strengths & Weaknesses
 
 **Strengths of the current solution:**
 
@@ -268,7 +253,7 @@ Results were validated across 1,000 randomly selected test cases. Absolute guida
 - No real-time processing: the current system processes single uploaded frames, not live video streams.
 - Validation gap: the guidance algorithm's correlation with quality score is statistically supported (Pearson p = 0.003), but the Spearman result (p = 0.19) is non-significant due to the bimodal quality score distribution in our dataset, suggesting more validation data in the mid-quality range is needed.
 
-### 7.6 Future Improvements
+### 6.6 Future Improvements
 
 If development were to continue, the following improvements are prioritized:
 
@@ -306,140 +291,6 @@ Quality score distribution of validation samples shown in Figure 5. The bimodal 
 
 ---
 
-## Technical Difficulty Assessment
-
-Machine learning tasks such as classification, regression, and the quality score model presented here are generally tractable with sufficient labeled data and compute. However, this project combined three distinct models — quality scoring, segmentation, and guidance — in a single integrated pipeline, which introduced non-trivial integration challenges.
-
-The most technically difficult component was adapting the pretrained Gong segmentation model to our data structure and Google Drive environment. The original codebase was not designed for our workflow, and fitting the pretrained weights to our pipeline required significant debugging and code modification.
-
-Conceptually, the most difficult challenge was designing a guidance algorithm that could be validated against available ground truth (quality scores). Without probe orientation data from iCardio, we had to derive spatial guidance from image content alone — a meaningful constraint that shaped the entire architecture.
-
-**Technical highlights for review:**
-
-- **Multi-model integration**: Three independently trained/adapted models combined in a single pipeline with a unifying GUI.
-- **Guidance algorithm design**: A novel approach to deriving probe correction from image segmentation results, validated against clinician-labeled quality scores.
-- **Large-scale dataset**: ~40,000 studies (~70 GB) processed and curated for model training.
-
----
-
-## Lessons Learned, Institutional Knowledge & Regulatory Insight
-
-### Resources & Collaborators
-
-Being among the first teams to attempt a multi-model ML/AI project in BME 445B, we encountered many challenges that stemmed from the resources available to us. The following resources were most useful:
-
-- **iCardio (Anna Gilgur COO; Roman Sandler CTO; Joseph Sokol co-CEO)**: Provided the 70 GB echocardiogram dataset under NDA and served as our primary clinical collaborator and SME. Three meetings over the course of the year were insufficient for the complexity of the project; future teams should clearly communicate expectations for SME involvement at the outset.
-
-- **Dr. Brent Liu**: Provided early-stage guidance on project feasibility. His observation that probe orientation data would be critical proved prescient.
-
-- **Dr. Jesse Yen**: Connected us with Rafael, an echocardiographer at USC Verdugo Hospital. Despite multiple follow-ups, a shadowing session could not be arranged before end of semester. Reach out to clinical SMEs early and follow up frequently.
-
-- **Dr. Trent Benedick**: Flagged data storage setup as the most critical early risk — correct. File structure for model training is foundational; chatbots are helpful for writing file organization code once you know what you want.
-
-- **GitHub (Gong, 2023)**: Source code for the LV segmentation model. Adapting rather than training from scratch was the right call given our timeline.
-
-- **Google Colab Pro / Google One**: Essential for storage and GPU access given the scale of our dataset. Ensure you have sufficient storage before extracting large datasets (extraction of our 70 GB archive took ~1 week of runtime).
-
-### Risk & Time Management
-
-The most important tradeoffs and lessons for future teams:
-
-- **Get a real subject matter expert**: Dr. Mai is an SME in sensors and electronics. For ML/AI projects, you need an ML SME who is accessible, willing to engage regularly, and can guide you through the specific challenges of your approach. When recruiting an SME, be explicit about what you need: how often, what kind of help, and what the project timeline requires.
-
-- **Chatbots are not a replacement for an SME**: LLMs are helpful for code generation and debugging, but they cannot guide a complex project. We found them especially limited for 3D spatial reasoning — a critical gap for this project. We adopted a three-strike rule: if a chatbot cannot get on track after two clarification iterations, move on.
-
-- **Get Claude Pro tokens**: At one of our final meetings, the iCardio CTO noted — after learning we were using the free tier — that Claude Pro tokens would have made our project significantly easier. We recommend getting access to Claude Pro (with agent capabilities) within your budget. Emailing Anthropic to request student project tokens is worth trying.
-
-- **Clinical SMEs require lead time**: Reaching out to Rafael (echocardiographer) in October resulted in no meeting by end of semester despite consistent follow-up. Paperwork and scheduling in clinical environments takes months. Reach out in September or earlier.
-
-- **Data acquisition is the long pole**: We did not receive the full iCardio dataset until December — two months into the project. Plan for delays in data acquisition and begin contingency planning early.
-
-### Institutional Knowledge & USC Network
-
-**Courses that were most useful for this project:**
-
-- BME 413/513: Signals and systems processing
-- BME 403: Cardiovascular anatomy
-- BME 528: Medical imaging informatics (masters course)
-- CSCI 561: Foundations of AI
-
-We leveraged the following USC connections: Dr. Yen (BME) for clinical collaborator introduction; Dr. Liu (BME) for early project scoping; TA Trent for ongoing technical feedback. We recommend future teams engage the BME department's clinical network early, as USC has strong ties to USC Keck School of Medicine and affiliated hospitals that can provide SME access.
-
-LLM tools are improving rapidly. The scope of software projects that are feasible in a few semesters is expanding. We encourage future groups to pursue software and ML projects, with appropriate SME support and compute resources in place.
-
----
-
-## Appendix: Lab Notebook & Documentation
-
-### October — Planning & Preliminary Meetings
-
-- Met with iCardio (Anna Gilgur COO; Roman Sandler CTO; Joseph Sokol co-CEO) to identify project scope and first steps.
-- Engaged with primary literature on echocardiogram acquisition and training; explored textbooks on cardiac anatomy and echo views.
-- Discussed plan with Dr. Brent Liu. He suggested obtaining probe position and orientation data, then training a model on those alongside the resulting images.
-- Dr. Liu noted uncertainty about how to proceed without orientation data.
-
-### November
-
-- Flushed out project idea on whiteboard; established starting plan.
-- TA Trent identified data storage setup as the most critical early risk.
-
-> **Note for future teams**: File structure is foundational for efficient model training and data retrieval. Chatbots are helpful for writing file organization code once you know what you want.
-
-- Continued communication with iCardio; requested dataset to begin project.
-- Signed NDAs to receive data files. Initially received 4 test DICOMs of PLAX view.
-- iCardio confirmed they did not have probe position or orientation data — only images and quality scores. Suggested we could collect our own data, but did not have a probe to lend.
-- Upon requesting more data, received no response.
-- Reached out to Rafael (echocardiographer, USC Verdugo Hospital) via Dr. Jesse Yen's introduction. No response.
-- Considered chatbot subscriptions. Jaron had access to Google Pro. Considered Claude Pro but department does not authorize recurring credit card purchases.
-
-> **Note for future teams**: It is worth purchasing a set amount of Claude tokens or a one-year Claude Pro subscription. Consider emailing Anthropic — they may grant free tokens for student projects.
-
-- Began brainstorming guidance algorithm. Idea: segment heart chambers, compute center of mass of each, compare to 'ideal' orientation using Procrustes algorithm. Concluded we could not move forward until we saw the data.
-
-### December
-
-- Developed initial GUI prototype in Python that ran locally in VS Code to display echocardiogram images and output a random quality score.
-- Data files received from iCardio as .zip files. Purchased a hard drive to store data. Extraction via Google Drive took approximately 6 hours/day for one week. Total dataset: ~70 GB, ~40,000 studies with 10–20 frames each.
-
-> **Note for future teams**: Colab Pro/Google One provided sufficient storage for extraction. Ensure you have adequate storage before beginning extraction — and anticipate at least a week of runtime.
-
-- Files were A4C view PNGs (not the PLAX DICOMs originally discussed). Some files were not extractable (~possible extraction code failure or data corruption). Approximately 40,000 usable studies obtained.
-
-> **Note for future teams**: A few thousand studies is more than adequate to train a quality score model.
-
-- For the GUI, implemented image upload and display functionality, adapting code to support PNG inputs after dataset format changed from DICOM.
-- Followed up with Rafael. He indicated he would request paperwork for a shadowing session.
-
-### January
-
-- Developed the quality score model. Achieved RMSE of 0.23, AUC-ROC of 0.88, AUC-PR of 0.85.
-- Began researching segmentation models. Found Gong (2023) paper with pretrained LV segmentation. Attempted to implement an earlier (2018) segmentation model — unsuccessful due to outdated code dependencies.
-- Followed up with Rafael — no response.
-- Enhanced GUI to a second iteration with an iterative feedback loop, prompting re-uploads for low-quality images and displaying updated scores, score differences, and improvement-based recommendations. Still not connected to quality and segmentation models.
-
-### February
-
-- Developed segmentation pipeline: found and modified Gong source code to fit our image structure. Segmentation working successfully.
-- Used segmentation masks to compute center of mass of the LV.
-- Refined guidance algorithm: Segment LV → calculate current COM → identify apex → compute target COM from top-quality images → calculate rotation angle recommendation.
-- Validated guidance recommendations: plotted absolute guidance angle vs. quality score across 1,000 test cases. Higher quality images received smaller corrections, as expected.
-- Followed up with Rafael — no response.
-- Enhanced GUI to a second iteration with an iterative feedback loop, prompting re-uploads for low-quality images and displaying updated scores, score differences, and improvement-based recommendations. Still not connected to quality and segmentation models.
-
-### March
-
-- Integration of quality score model, segmentation model, and GUI using model weights.
-- Preparation for final presentations and reports.
-- Followed up with Rafael — indicated he would send paperwork but Dr. Yen would need to serve as liaison. Given the semester timeline, did not pursue further.
-- Met with iCardio to present final results. Roman (CTO) suggested future directions: clustering cases by metadata and quality score, then asking a clinician to annotate what is wrong with each cluster — a promising direction for expanding the guidance system's capabilities.
-
-### April
-
-- Preparation for final presentations and report submission.
-- Live demonstration presented April 21, 2026.
-
----
-
 ## References
 
 [1] Hathaway R., Bruning R. (2025). Exploring the Relationship of Cognitive and Motivational Factors to Sonography Student Performance. *Journal of Diagnostic Medical Sonography*. 2025;41(1):34-43. doi: [10.1177/87564793241257495](https://doi.org/10.1177/87564793241257495)
@@ -453,7 +304,3 @@ LLM tools are improving rapidly. The scope of software projects that are feasibl
 [5] UCSF Cardiac Sonography Program (Echocardiography). UCSF Cardiac Sonography. https://cardiacsonography.ucsf.edu/cardiac-sonography
 
 [6] U.S. Food and Drug Administration. 510(k) Summary: Caption Guidance (K200755). 2020. https://www.accessdata.fda.gov/cdrh_docs/pdf20/K200755.pdf
-
----
-
-Report formatted with the help of Claude Opus 3.5. Previous iterations available upon request.
