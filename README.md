@@ -308,4 +308,12 @@ Quality score distribution of validation samples shown in Figure 5. The bimodal 
 
 [6] U.S. Food and Drug Administration. 510(k) Summary: Caption Guidance (K200755). 2020. https://www.accessdata.fda.gov/cdrh_docs/pdf20/K200755.pdf
 
+Acknowledgements:
+iCardio (Anna, Roman, Joseph): Provided the echocardiogram dataset under NDA and served as our primary clinical collaborator and SME. Three meetings over the course of the year were insufficient for the complexity of the project; future teams should clearly communicate expectations for SME involvement at the outset.
+Dr. Brent Liu: Provided early-stage guidance on project feasibility. His observation that probe orientation data would be critical proved prescient.
+Dr. Jesse Yen: Connected us with Rafael, an echocardiographer at USC Verdugo Hospital. Despite multiple follow-ups, a shadowing session could not be arranged before end of semester. Reach out to clinical SMEs early and follow up frequently.
+Trent Benedick: Flagged data storage setup as the most critical early risk. File structure for model training is foundational; chatbots are helpful for writing file organization code once you know what you want.
+GitHub (Gong, 2023): Source code for the LV segmentation model. Adapting rather than training from scratch was the right call given our timeline.
+Google Colab Pro / Google One: Essential for storage and GPU access given the scale of our dataset. Ensure you have sufficient storage before extracting large datasets (extraction of our 70 GB archive took ~1 week of runtime).
+
 *Formatted with the help of Claude Opus 4.5*
