@@ -1,0 +1,11 @@
+flask
+pydicom
+pillow
+numpy
+scipy
+torch
+torchvision
+segmentation-models-pytorch
+pylibjpeg
+pylibjpeg-libjpeg
+pylibjpeg-openjpeg

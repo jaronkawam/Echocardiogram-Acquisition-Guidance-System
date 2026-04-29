@@ -1,0 +1,395 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Echo Guidance Prototype</title>
+  <style>
+    :root{
+      --bg:#0b1220;
+      --card:#0f172a;
+      --muted:#9fb3d9;
+      --text:#eaf1ff;
+      --accent:#3b82f6;
+      --good:#22c55e;
+      --warn:#f59e0b;
+      --border:rgba(255,255,255,.12);
+    }
+
+    *{
+      box-sizing:border-box;
+      font-family:ui-sans-serif,system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial;
+    }
+
+    body{
+      margin:0;
+      background:linear-gradient(180deg,#070b14,var(--bg));
+      color:var(--text);
+    }
+
+    .wrap{
+      max-width:1100px;
+      margin:40px auto;
+      padding:0 18px;
+    }
+
+    .header{
+      margin-bottom:18px;
+    }
+
+    h1{
+      margin:0;
+      font-size:28px;
+    }
+
+    .sub{
+      color:var(--muted);
+      font-size:14px;
+      margin-top:6px;
+    }
+
+    .grid{
+      display:grid;
+      grid-template-columns:1.1fr 0.9fr;
+      gap:16px;
+    }
+
+    .card{
+      background:var(--card);
+      border:1px solid var(--border);
+      border-radius:16px;
+      box-shadow:0 8px 30px rgba(0,0,0,.35);
+      overflow:hidden;
+    }
+
+    .pad{
+      padding:16px;
+    }
+
+    .row{
+      display:flex;
+      gap:10px;
+      align-items:center;
+      flex-wrap:wrap;
+    }
+
+    .btn{
+      background:var(--accent);
+      color:white;
+      border:0;
+      border-radius:12px;
+      padding:10px 14px;
+      font-weight:600;
+      cursor:pointer;
+    }
+
+    .btn:disabled{
+      opacity:.45;
+      cursor:not-allowed;
+    }
+
+    .ghost{
+      background:transparent;
+      border:1px solid var(--border);
+      color:var(--text);
+    }
+
+    input[type="file"]{
+      display:none;
+    }
+
+    .preview{
+      width:100%;
+      aspect-ratio:4/3;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      background:rgba(0,0,0,.25);
+      border-top:1px solid var(--border);
+      overflow:hidden;
+    }
+
+    .preview img{
+      max-width:100%;
+      max-height:100%;
+      display:none;
+    }
+
+    .placeholder{
+      color:var(--muted);
+      text-align:center;
+      padding:30px;
+    }
+
+    .kpi{
+      display:grid;
+      gap:16px;
+    }
+
+    .box{
+      padding:14px;
+      border:1px solid var(--border);
+      border-radius:12px;
+      background:#111c33;
+    }
+
+    .label{
+      color:var(--muted);
+      font-size:12px;
+      margin-bottom:6px;
+    }
+
+    .value{
+      font-size:22px;
+      font-weight:700;
+      color:#ffffff;
+    }
+
+    .small{
+      font-size:18px;
+      line-height:1.35;
+    }
+
+    .err{
+      color:#ffb4b4;
+      font-size:13px;
+      margin-top:10px;
+      white-space:pre-wrap;
+    }
+
+    .done{
+      color:var(--good);
+      font-weight:700;
+    }
+
+    .needs{
+      color:var(--warn);
+      font-weight:700;
+    }
+
+    .filename{
+      color:var(--muted);
+      font-size:14px;
+      margin-top:10px;
+      word-break:break-all;
+    }
+
+    #scoreVal{
+      font-size:26px;
+      color:#ffffff;
+    }
+
+    @media (max-width:900px){
+      .grid{
+        grid-template-columns:1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="header">
+      <h1>Echo Guidance Prototype</h1>
+      <div class="sub">
+        Upload an ultrasound image or DICOM to view the quality score and guidance recommendation.
+      </div>
+    </div>
+
+    <div class="grid">
+      <div class="card">
+        <div class="pad">
+          <div class="row">
+            <label class="btn" for="fileInput">Upload Image</label>
+            <input id="fileInput" type="file" accept=".dcm,.png,.jpg,.jpeg,image/png,image/jpeg,application/dicom" />
+            <button class="btn ghost" id="analyzeBtn" disabled>Run Analysis</button>
+            <button class="btn ghost" id="resetBtn">Start Over</button>
+          </div>
+
+          <div class="filename" id="fileName">No file selected</div>
+          <div class="err" id="err"></div>
+        </div>
+
+        <div class="preview">
+          <div class="placeholder" id="ph">No preview yet. Upload a PNG, JPG, JPEG, or DICOM file.</div>
+          <img id="img" alt="Ultrasound preview" />
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="pad">
+          <div class="kpi">
+            <div class="box">
+              <div class="label">Quality Score</div>
+              <div class="value" id="scoreVal">—</div>
+            </div>
+
+            <div class="box">
+              <div class="label">Assessment</div>
+              <div class="value" id="assessmentVal">—</div>
+            </div>
+
+            <div class="box">
+              <div class="label">Segmentation Status</div>
+              <div class="value" id="segVal">—</div>
+            </div>
+
+            <div class="box">
+              <div class="label">Guidance</div>
+              <div class="value small" id="guidanceVal">—</div>
+            </div>
+
+            <div class="box">
+              <div class="label">Current Center of Mass</div>
+              <div class="value small" id="currentComVal">—</div>
+            </div>
+
+            <div class="box">
+              <div class="label">Ideal Center of Mass</div>
+              <div class="value small" id="targetComVal">—</div>
+            </div>
+
+            <div class="box">
+              <div class="label">Correction Angle</div>
+              <div class="value" id="angleVal">—</div>
+            </div>
+
+            <div class="box">
+              <div class="label">Workflow Status</div>
+              <div class="value" id="doneVal">—</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+<script>
+  const fileInput = document.getElementById("fileInput");
+  const analyzeBtn = document.getElementById("analyzeBtn");
+  const resetBtn = document.getElementById("resetBtn");
+
+  const img = document.getElementById("img");
+  const ph = document.getElementById("ph");
+  const err = document.getElementById("err");
+  const fileName = document.getElementById("fileName");
+
+  const scoreVal = document.getElementById("scoreVal");
+  const assessmentVal = document.getElementById("assessmentVal");
+  const segVal = document.getElementById("segVal");
+  const guidanceVal = document.getElementById("guidanceVal");
+  const currentComVal = document.getElementById("currentComVal");
+  const targetComVal = document.getElementById("targetComVal");
+  const angleVal = document.getElementById("angleVal");
+  const doneVal = document.getElementById("doneVal");
+
+  let selectedFile = null;
+
+  function resetUI() {
+    selectedFile = null;
+    fileInput.value = "";
+    analyzeBtn.disabled = true;
+
+    img.style.display = "none";
+    ph.style.display = "block";
+    ph.textContent = "No preview yet. Upload a PNG, JPG, JPEG, or DICOM file.";
+
+    err.textContent = "";
+    fileName.textContent = "No file selected";
+    scoreVal.textContent = "—";
+    assessmentVal.textContent = "—";
+    assessmentVal.className = "value";
+    segVal.textContent = "—";
+    guidanceVal.textContent = "—";
+    currentComVal.textContent = "—";
+    targetComVal.textContent = "—";
+    angleVal.textContent = "—";
+    doneVal.textContent = "—";
+    doneVal.className = "value";
+  }
+
+  fileInput.addEventListener("change", () => {
+    selectedFile = fileInput.files?.[0] || null;
+    analyzeBtn.disabled = !selectedFile;
+
+    if (!selectedFile) {
+      fileName.textContent = "No file selected";
+      img.style.display = "none";
+      ph.style.display = "block";
+      ph.textContent = "No preview yet. Upload a PNG, JPG, JPEG, or DICOM file.";
+      return;
+    }
+
+    fileName.textContent = `Selected file: ${selectedFile.name}`;
+
+    if (selectedFile.type.startsWith("image/")) {
+      const reader = new FileReader();
+      reader.onload = function(e) {
+        img.src = e.target.result;
+        img.style.display = "block";
+        ph.style.display = "none";
+      };
+      reader.readAsDataURL(selectedFile);
+    } else {
+      ph.textContent = "DICOM selected. Preview will appear after analysis.";
+      img.style.display = "none";
+      ph.style.display = "block";
+    }
+  });
+
+  analyzeBtn.addEventListener("click", async () => {
+    if (!selectedFile) return;
+
+    err.textContent = "";
+
+    try {
+      const form = new FormData();
+      form.append("file", selectedFile);
+
+      const res = await fetch("/api/analyze", {
+        method: "POST",
+        body: form
+      });
+
+      const data = await res.json();
+
+      if (!res.ok) {
+        throw new Error(data.error || "Unknown error");
+      }
+
+      fileName.textContent = `File: ${data.file_name}`;
+      scoreVal.textContent = `${data.score}%`;
+      assessmentVal.textContent = data.assessment;
+      assessmentVal.className = `value ${data.assessment === "Good" ? "done" : "needs"}`;
+      segVal.textContent = data.segmentation_status;
+      guidanceVal.textContent = data.guidance;
+
+      if (data.current_com) {
+        currentComVal.textContent = `(${data.current_com.x}, ${data.current_com.y})`;
+      } else {
+        currentComVal.textContent = "—";
+      }
+
+      if (data.target_com) {
+        targetComVal.textContent = `(${data.target_com.x}, ${data.target_com.y})`;
+      } else {
+        targetComVal.textContent = "—";
+      }
+
+      angleVal.textContent = data.angle_deg != null ? `${data.angle_deg}°` : "—";
+      doneVal.textContent = data.done ? "Complete" : "Needs Follow-up";
+      doneVal.className = `value ${data.done ? "done" : "needs"}`;
+
+      img.src = data.overlay_base64 || data.png_base64;
+      img.style.display = "block";
+      ph.style.display = "none";
+
+    } catch (e) {
+      err.textContent = String(e.message || e);
+    }
+  });
+
+  resetBtn.addEventListener("click", resetUI);
+  resetUI();
+</script>
+</body>
+</html>
