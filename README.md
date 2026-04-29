@@ -2,8 +2,7 @@
 
 **BME 445B Final Report – Spring 2026**
 
-*Aava Abedinpour, Jaron Kawamura, Lindsay Best*  
-*Group 7 | Alfred E. Mann Department of Biomedical Engineering*  
+*Alfred E. Mann Department of Biomedical Engineering*  
 *USC Viterbi School of Engineering*
 
 ---
@@ -458,5 +457,3 @@ LLM tools are improving rapidly. The scope of software projects that are feasibl
 ---
 
 Report formatted with the help of Claude Opus 3.5. Previous iterations available upon request.
-
-*Abedinpour, Kawamura, Best | Group 7*
