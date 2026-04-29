@@ -1,10 +1,13 @@
 # Echocardiogram Acquisition Guidance System
 
-**BME 445B Final Report – Spring 2026**
+**BME 445B – Spring 2026**
 
 *Teammates: Aava Abedinpour, Lindsay Best*    
 *Alfred E. Mann Department of Biomedical Engineering*  
 *USC Viterbi School of Engineering*
+
+
+![Header image](images/image4.png)  
 
 ---
 
