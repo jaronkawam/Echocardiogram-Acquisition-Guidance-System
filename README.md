@@ -2,6 +2,7 @@
 
 **BME 445B Final Report – Spring 2026**
 
+*Teammates: Aava Abedinpour, Lindsay Best*
 *Alfred E. Mann Department of Biomedical Engineering*  
 *USC Viterbi School of Engineering*
 
