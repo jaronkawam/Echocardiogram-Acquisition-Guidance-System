@@ -2,8 +2,7 @@
 
 **BME 445B Final Report – Spring 2026**
 
-*Aava Abedinpour, Jaron Kawamura, Lindsay Best*  
-*Group 7 | Alfred E. Mann Department of Biomedical Engineering*  
+*Alfred E. Mann Department of Biomedical Engineering*  
 *USC Viterbi School of Engineering*
 
 ---
@@ -215,6 +214,9 @@ VS Code and ChatGPT were used to build the GUI, with test scans pulled from Goog
 - **AUC-ROC (binary threshold 0.5)**: 0.88
 - **AUC-PR**: 0.85
 
+![AUC results](images/image17.png)  
+*Figure 4. AUC metrics plotted.*
+
 These results indicate the model reliably distinguishes between good-quality and poor-quality images, fulfilling the primary functional requirement for the quality scoring component.
 
 ### 6.3 Segmentation Model
@@ -235,7 +237,7 @@ The guidance algorithm proceeds as follows:
 Results were validated across 1,000 randomly selected test cases. Absolute guidance angle magnitudes were plotted against quality score.
 
 ![Guidance validation plot](images/image7.png)  
-*Figure 4. Guidance angle magnitude vs. quality score across 1,000 validation cases. Higher-quality images receive smaller angular corrections, validating the guidance algorithm's directional consistency.*
+*Figure 5. Guidance angle magnitude vs. quality score across 1,000 validation cases. Higher-quality images receive smaller angular corrections, validating the guidance algorithm's directional consistency.*
 
 ### 6.5 Strengths & Weaknesses
 
@@ -304,3 +306,5 @@ Quality score distribution of validation samples shown in Figure 5. The bimodal 
 [5] UCSF Cardiac Sonography Program (Echocardiography). UCSF Cardiac Sonography. https://cardiacsonography.ucsf.edu/cardiac-sonography
 
 [6] U.S. Food and Drug Administration. 510(k) Summary: Caption Guidance (K200755). 2020. https://www.accessdata.fda.gov/cdrh_docs/pdf20/K200755.pdf
+
+*Formatted with the help of Claude Opus 4.5*
