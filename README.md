@@ -2,7 +2,8 @@
 
 **BME 445B – Spring 2026**
 
-*Teammates: Aava Abedinpour, Lindsay Best*    
+*Teammates: Aava Abedinpour, Lindsay Best*   
+*Industry Sponsor: iCardio.ai*  
 *Alfred E. Mann Department of Biomedical Engineering*  
 *USC Viterbi School of Engineering*
 
